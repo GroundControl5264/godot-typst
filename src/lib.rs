@@ -9,7 +9,7 @@ use std::sync::{Arc, Mutex};
 use std::thread;
 use std::process::Command;
 use godot::prelude::*;
-use godot::classes::{Sprite2D, ISprite2D, Image, ImageTexture, TextureRect, ITextureRect};
+use godot::classes::{ISprite2D, ITextureRect, Image, ImageTexture, Sprite2D, Texture2D, TextureRect};
 use usvg::TreeParsing;
 use tempfile::tempdir;
 use image::{DynamicImage, RgbaImage, ImageBuffer, ImageOutputFormat};
@@ -37,8 +37,8 @@ impl ISprite2D for TypstSprite {
     fn init(node: Base<Sprite2D>) -> Self {
         TypstSprite {
             node,
-            typst_expression: String::new().into(),
-            stored_expr: String::new().into(),
+            typst_expression: GString::new(),
+            stored_expr: GString::new(),
             shared_queue: Arc::new(Mutex::new(Vec::new())),
             time_accumulator: 0.0,
             is_job_active: false,
@@ -60,15 +60,15 @@ impl ISprite2D for TypstSprite {
                 self.is_job_active = false;
             }
         }
-        let mut queue = self.shared_queue.lock().unwrap();
-        if let Some(png_buffer) = queue.pop() {
+        let maybe_png = self.shared_queue.lock().unwrap().pop();
+        if let Some(png_buffer) = maybe_png {
             godot_print!("Updating Typst node...");
             // Update node with new texture
-            let mut typst_image = Image::new();
-            typst_image.load_png_from_buffer(PackedByteArray::from(png_buffer.as_slice()));
-            let typst_texture = ImageTexture::create_from_image(typst_image).expect("Failed to create ImageTexture!");
+            let mut typst_image = Image::new_gd();
+            typst_image.load_png_from_buffer(&PackedByteArray::from(png_buffer.as_slice()));
+            let typst_texture = ImageTexture::create_from_image(&typst_image).expect("Failed to create ImageTexture!");
             // svg_texture.update();
-            self.node.set_texture(typst_texture.upcast());
+            self.base_mut().set_texture(&typst_texture.upcast::<Texture2D>());
         }
     }
 }
@@ -175,8 +175,8 @@ impl ITextureRect for TypstTextureRect {
     fn init(node: Base<TextureRect>) -> Self {
         TypstTextureRect {
             node,
-            typst_expression: String::new().into(),
-            stored_expr: String::new().into(),
+            typst_expression: GString::new(),
+            stored_expr: GString::new(),
             shared_queue: Arc::new(Mutex::new(Vec::new())),
             time_accumulator: 0.0,
             is_job_active: false,
@@ -198,15 +198,15 @@ impl ITextureRect for TypstTextureRect {
                 self.is_job_active = false;
             }
         }
-        let mut queue = self.shared_queue.lock().unwrap();
-        if let Some(png_buffer) = queue.pop() {
+        let maybe_png = self.shared_queue.lock().unwrap().pop();
+        if let Some(png_buffer) = maybe_png {
             godot_print!("Updating Typst node...");
             // Update node with new texture
-            let mut typst_image = Image::new();
-            typst_image.load_png_from_buffer(PackedByteArray::from(png_buffer.as_slice()));
-            let typst_texture = ImageTexture::create_from_image(typst_image).expect("Failed to create ImageTexture!");
+            let mut typst_image = Image::new_gd();
+            typst_image.load_png_from_buffer(&PackedByteArray::from(png_buffer.as_slice()));
+            let typst_texture = ImageTexture::create_from_image(&typst_image).expect("Failed to create ImageTexture!");
             // svg_texture.update();
-            self.node.set_texture(typst_texture.upcast());
+            self.base_mut().set_texture(&typst_texture.upcast::<Texture2D>());
         }
     }
 }
