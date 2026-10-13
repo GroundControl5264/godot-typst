@@ -22,8 +22,7 @@ use image::{DynamicImage, RgbaImage, ImageBuffer, ImageOutputFormat};
 #[derive(GodotClass)]
 #[class(base = Sprite2D, tool)]
 pub struct TypstSprite {
-    #[base]
-    pub node: Base<Sprite2D>,
+    base: Base<Sprite2D>,
     #[export(multiline)]
     pub typst_expression: GString,
     pub stored_expr: GString,
@@ -34,9 +33,9 @@ pub struct TypstSprite {
 
 #[godot_api]
 impl ISprite2D for TypstSprite {
-    fn init(node: Base<Sprite2D>) -> Self {
+    fn init(base: Base<Sprite2D>) -> Self {
         TypstSprite {
-            node,
+            base,
             typst_expression: GString::new(),
             stored_expr: GString::new(),
             shared_queue: Arc::new(Mutex::new(Vec::new())),
@@ -160,8 +159,7 @@ impl TypstSprite {
 #[derive(GodotClass)]
 #[class(base = TextureRect, tool)]
 pub struct TypstTextureRect {
-    #[base]
-    pub node: Base<TextureRect>,
+    base: Base<TextureRect>,
     #[export(multiline)]
     pub typst_expression: GString,
     pub stored_expr: GString,
@@ -172,9 +170,9 @@ pub struct TypstTextureRect {
 
 #[godot_api]
 impl ITextureRect for TypstTextureRect {
-    fn init(node: Base<TextureRect>) -> Self {
+    fn init(base: Base<TextureRect>) -> Self {
         TypstTextureRect {
-            node,
+            base,
             typst_expression: GString::new(),
             stored_expr: GString::new(),
             shared_queue: Arc::new(Mutex::new(Vec::new())),
