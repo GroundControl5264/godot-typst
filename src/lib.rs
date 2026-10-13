@@ -9,7 +9,7 @@ use std::sync::{Arc, Mutex};
 use std::thread;
 use std::process::Command;
 use godot::prelude::*;
-use godot::engine::{Sprite2D, ISprite2D, Image, ImageTexture, TextureRect, ITextureRect};
+use godot::classes::{Sprite2D, ISprite2D, Image, ImageTexture, TextureRect, ITextureRect};
 use usvg::TreeParsing;
 use tempfile::tempdir;
 use image::{DynamicImage, RgbaImage, ImageBuffer, ImageOutputFormat};
